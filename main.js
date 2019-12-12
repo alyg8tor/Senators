@@ -9,6 +9,7 @@ async function getAPIData(url) {
     }
 }
 
+
 let allSenators = []
 let simpleSenators = []
 let republicans = []
@@ -19,6 +20,7 @@ const theData = getAPIData('senators.json').then(data => {
     simpleSenators = makeSimpleMap(allSenators)
     republicans = filterSenators(simpleSenators, "R")
     democrats = filterSenators(simpleSenators, "D")
+    console.log(totalVotes(simpleSenators))
     populateDOM(simpleSenators)
 })
 
@@ -32,6 +34,7 @@ function makeSimpleMap(allOfThem) {
             age: `Age: ${calculate_age(new Date(senator.date_of_birth))}`,
             rank: senator.state_rank,
             gender: senator.gender,
+            total_votes: senator.total_votes,
         }
     })
     return results
@@ -43,11 +46,13 @@ function filterSenators(simpleList, partyAffiliation) {
 }
 
 //reduce example
-const testArray = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
 
-const testReduce = testArray.reduce((acc, num) => {
-    return acc + num
-}, 0)
+function totalVotes(senatorList) {
+    const results = senatorList.reduce((acc, senator) => {
+        return acc + senator.total_votes
+    }, 0)
+    return results
+}
 
 const container = document.querySelector('.container')
 
@@ -61,7 +66,7 @@ function populateDOM(senator_array) {
         figure.setAttribute('class', 'image')
         let figureImage = document.createElement('img')
         figureImage.src = `https://www.congress.gov/img/member/${senator.id.toLowerCase()}_200.jpg`
-        figureImage.alt = 'Placeholder image'
+        figureImage.onerror = 'Placeholder image'
 
         figure.appendChild(figureImage)
         cardImage.appendChild(figure)
@@ -128,5 +133,101 @@ function calculate_age(dob) {
 
     return Math.abs(age_dt.getUTCFullYear() - 1970)
 }
+/*
+const republican = senator.filter(senator => senator.party === 'R')
+const democratic = senator.filter(senator => senator.party === 'D')
+const independent = senator.filter(senator => senator.party === 'ID')
+
+const allDivs = Array.from(document.querySelectorAll('div'))
+
+let mainHeader = document.querySelector('header')
+
+let revertButton = document.createElement('button')
+revertButton.textContent = 'ALL PARTIES'
+
+revertButton.addEventListener('click', () => {
+    republican.forEach((character) => {
+        let matchedDiv = allDivs.find((oneDiv) => {
+            return oneDiv.firstChild.textContent === character.name
+        })
+        matchedDiv.setAttribute('style', 'display: revert;')
+
+    })
+    democratic.forEach((character) => {
+        let matchedDiv = allDivs.find((oneDiv) => {
+            return oneDiv.firstChild.textContent === character.name
+        })
+        matchedDiv.setAttribute('style', 'display: revert;')
+
+    })
+    independent.forEach((character) => {
+        let matchedDiv = allDivs.find((oneDiv) => {
+            return oneDiv.firstChild.textContent === character.name
+        })
+        matchedDiv.setAttribute('style', 'display: revert;')
+    })
+})
+
+let rButton  = document.createElement('button')
+rButton.textContent = 'REPUBLICAN'
+
+rButton.addEventListener('click', () => {
+    democratic.forEach((character) => {
+        let matchedDiv = allDivs.find((oneDiv) => {
+            return oneDiv.firstChild.textContent === character.name
+        })
+        matchedDiv.setAttribute('style', 'display: none;')
+        //matchedDiv.classList.add('animated', 'bounceOutLeft')
+
+    })
+    independent.forEach((character) => {
+        let matchedDiv = allDivs.find((oneDiv) => {
+            return oneDiv.firstChild.textContent === character.name
+        })
+        matchedDiv.setAttribute('style', 'display: none;')
+        //matchedDiv.classList.add('animated', 'bounceOutLeft')
+    })
+})
+
+let dButton = document.createElement('button')
+dButton.textContent = 'DEMOCTRATIC'
 
 
+dButton.addEventListener('click', () => {
+    republican.forEach((character) => {
+        let matchedDiv = allDivs.find((oneDiv) => {
+            return oneDiv.firstChild.textContent === character.name
+        })
+        matchedDiv.setAttribute('style', 'display: none;')
+    })
+    independent.forEach((character) => {
+        let matchedDiv = allDivs.find((oneDiv) => {
+            return oneDiv.firstChild.textContent === character.name
+        })
+        matchedDiv.setAttribute('style', 'display: none;')
+    })
+})
+
+let iButton = document.createElement('button')
+iButton.textContent = 'INDEPENDENT'
+
+iButton.addEventListener('click', () => {
+    democratic.forEach((character) => {
+        let matchedDiv = allDivs.find((oneDiv) => {
+            return oneDiv.firstChild.textContent === character.name
+        })
+        matchedDiv.setAttribute('style', 'display: none;')
+    })
+    republican.forEach((character) => {
+        let matchedDiv = allDivs.find((oneDiv) => {
+            return oneDiv.firstChild.textContent === character.name
+        })
+        matchedDiv.setAttribute('style', 'display: none;')
+    })
+})
+
+mainHeader.appendChild(revertButton)
+mainHeader.appendChild(rButton)
+mainHeader.appendChild(dButton)
+mainHeader.appendChild(iButton)
+*/
